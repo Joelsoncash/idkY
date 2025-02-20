@@ -1,0 +1,28 @@
+
+Comprehensive MetaTrader5 Connection Diagnostics
+==================================================
+Timestamp: 2025-02-01 01:54:26.247046
+
+System Environment:
+Python Version: 3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]
+MetaTrader5 Version: 5.0.4803
+MetaTrader5 Library Path: C:\Users\joels\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\MetaTrader5\__init__.py
+Current Working Directory: C:\Users\joels\Desktop\MT1.0
+Script Directory: C:\Users\joels\Desktop\MT1.0
+
+Pre-Initialization Checks:
+Terminal Path: C:\Program Files\MetaTrader 5\terminal64.exe
+Terminal Path Exists: True
+
+Initialization Attempt:
+MT5 Initialized Successfully
+
+Terminal Information:
+Connected: True
+Trade Allowed: True
+Terminal Build: 4822
+Terminal Path: C:\Program Files\MetaTrader 5
+
+Login Attempt:
+Login Failed - Error Code: -6
+Error Description: Terminal: Authorization failed

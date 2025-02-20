@@ -1,0 +1,10 @@
+{
+    "account": {
+        "number": "5033434282",
+        "password": "Mk*1VaHv",
+        "server": "MetaQuotes-Demo"
+    },
+    "symbols": ["EURUSD", "GBPUSD", "XAUUSD"],
+    "timeframe": "M5",
+    "data_window": 1000
+}
