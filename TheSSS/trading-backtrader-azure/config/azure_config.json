@@ -1,0 +1,9 @@
+{
+  "resource_group": "YourResourceGroupName",
+  "vm_name": "YourVMName",
+  "location": "YourAzureRegion",
+  "subscription_id": "YourSubscriptionID",
+  "client_id": "YourClientID",
+  "client_secret": "YourClientSecret",
+  "tenant_id": "YourTenantID"
+}

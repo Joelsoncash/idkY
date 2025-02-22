@@ -1,0 +1,24 @@
+{
+  "data_feed": {
+    "type": "CSV",
+    "file_path": "data/historical_data.csv",
+    "timeframe": "1D",
+    "datetime_format": "%Y-%m-%d"
+  },
+  "strategy": {
+    "name": "SampleStrategy",
+    "params": {
+      "sma_period": 20,
+      "stop_loss": 0.02,
+      "take_profit": 0.05
+    }
+  },
+  "optimization": {
+    "enabled": true,
+    "parameters": {
+      "sma_period": [10, 20, 30],
+      "stop_loss": [0.01, 0.02, 0.03],
+      "take_profit": [0.03, 0.05, 0.07]
+    }
+  }
+}
