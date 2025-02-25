@@ -1,28 +1,40 @@
-
-Comprehensive MetaTrader5 Connection Diagnostics
+SYSTEM DIAGNOSTICS
 ==================================================
-Timestamp: 2025-02-01 01:54:26.247046
+Current Working Directory: /Users/joelsonquiteque/LocalRv test/idkY
+Python version: 3.13.2 (v3.13.2:4f8bb3947cf, Feb  4 2025, 11:51:10) [Clang 15.0.0 (clang-1500.3.9.4)]
+Python executable: /usr/local/bin/python3
+Python path: ['/Users/joelsonquiteque/LocalRv test/idkY', '/Library/Frameworks/Python.framework/Versions/3.13/lib/python313.zip', '/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13', '/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/lib-dynload', '/Library/Frameworks/Python.framework/Versions/3.13/lib/python3.13/site-packages']
 
-System Environment:
-Python Version: 3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]
-MetaTrader5 Version: 5.0.4803
-MetaTrader5 Library Path: C:\Users\joels\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\MetaTrader5\__init__.py
-Current Working Directory: C:\Users\joels\Desktop\MT1.0
-Script Directory: C:\Users\joels\Desktop\MT1.0
+PACKAGE CHECKS
+==================================================
+MetaTrader5: Not Installed
+pandas: Installed (Version: Version not found)
+numpy: Installed (Version: Version not found)
 
-Pre-Initialization Checks:
-Terminal Path: C:\Program Files\MetaTrader 5\terminal64.exe
-Terminal Path Exists: True
+PIP PACKAGES
+==================================================
+Package            Version
+------------------ -----------
+backtrader         1.9.78.123
+certifi            2025.1.31
+charset-normalizer 3.4.1
+idna               3.10
+numpy              2.2.3
+pandas             2.2.3
+pip                24.3.1
+pygame             2.6.1
+python-dateutil    2.9.0.post0
+pytz               2025.1
+requests           2.32.3
+six                1.17.0
+tzdata             2025.1
+urllib3            2.3.0
 
-Initialization Attempt:
-MT5 Initialized Successfully
 
-Terminal Information:
-Connected: True
-Trade Allowed: True
-Terminal Build: 4822
-Terminal Path: C:\Program Files\MetaTrader 5
-
-Login Attempt:
-Login Failed - Error Code: -6
-Error Description: Terminal: Authorization failed
+METATRADER5 DIAGNOSTICS
+==================================================
+Failed to import MetaTrader5: No module named 'MetaTrader5'
+Traceback (most recent call last):
+  File "/Users/joelsonquiteque/LocalRv test/idkY/test_mt5.py", line 65, in run_diagnostics
+    import MetaTrader5 as mt5
+ModuleNotFoundError: No module named 'MetaTrader5'

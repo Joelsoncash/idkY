@@ -1,8 +1,0 @@
-Backtrader==1.9.74.123
-pandas==1.5.3
-numpy==1.23.5
-matplotlib==3.6.2
-azure-identity==1.7.0
-azure-mgmt-compute==20.0.0
-azure-mgmt-resource==20.0.0
-azure-storage-blob==12.10.0
