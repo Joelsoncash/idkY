@@ -11,16 +11,17 @@
    - [Azure Configuration](#azure-configuration)
 5. [Script Documentation](#script-documentation)
 6. [Trading Strategy](#trading-strategy)
-7. [Usage Examples](#usage-examples)
-8. [Troubleshooting](#troubleshooting)
-9. [Maintenance & Monitoring](#maintenance--monitoring)
+7. [R1-V Integration](#r1-v-integration)
+8. [Usage Examples](#usage-examples)
+9. [Troubleshooting](#troubleshooting)
+10. [Maintenance & Monitoring](#maintenance--monitoring)
 
 ## Project Overview
 This project provides a comprehensive trading system that integrates MetaTrader 5 with Python for automated trading. The system includes:
 
 - Real-time market data processing
 - Automated trade execution
-- Reinforcement learning integration
+- Reinforcement learning integration with R1-V
 - Cloud deployment capabilities
 - Comprehensive monitoring and logging
 
@@ -34,6 +35,9 @@ graph TD
     E --> F[Results Monitoring]
     F --> G[Cloud Storage]
     G --> H[Analytics Dashboard]
+    C --> I[R1-V Integration]
+    I --> J[RL Model Training]
+    J --> K[Strategy Optimization]
 ```
 
 ## Setup Instructions
@@ -183,134 +187,51 @@ The RLBacktraderStrategy integrates reinforcement learning with Backtrader's tra
    - Daily loss limits
    - Trade frequency controls
 
-### Traditional Strategy Components
-1. Dynamic Support/Resistance Levels
-2. 40-period SMA Filter
-3. Risk Management:
-   - 2% per trade
-   - 10:1 risk/reward ratio
-   - Daily loss limit
+## R1-V Integration
 
-### Execution Logic
-```python
-def execute_trade(signal):
-    if signal == "BUY":
-        # Calculate position size
-        lot_size = calculate_lot_size(risk_percentage)
-        # Execute buy order
-        mt5.order_send({
-            "action": mt5.TRADE_ACTION_DEAL,
-            "symbol": symbol,
-            "volume": lot_size,
-            "type": mt5.ORDER_TYPE_BUY,
-            "price": mt5.symbol_info_tick(symbol).ask,
-            "sl": calculate_stop_loss(),
-            "tp": calculate_take_profit()
-        })
+### Overview
+The R1-V repository provides advanced reinforcement learning capabilities for the trading system. Key features include:
+
+- GRPO (Generalized Reinforcement Policy Optimization) implementation
+- Multi-GPU training support
+- Advanced reward shaping
+- Comprehensive logging and monitoring
+
+### Setup
+1. Clone the R1-V repository:
+   ```bash
+   git clone https://github.com/your-org/R1-V-repo.git
+   ```
+
+2. Install dependencies:
+   ```bash
+   cd R1-V-repo
+   pip install -r requirements.txt
+   ```
+
+3. Configure training:
+   ```bash
+   python src/r1-v/local_scripts/train_qwen2_vl.sh
+   ```
+
+### Configuration
+Edit `src/r1-v/configs/qwen2vl_sft_config.yaml`:
+```yaml
+training:
+  batch_size: 32
+  learning_rate: 0.0001
+  num_epochs: 10
+  checkpoint_dir: ./checkpoints
 ```
 
-## Simulation & Training
+### Usage
+```bash
+# Start training
+python src/r1-v/run_grpo.sh
 
-### PaperTrading Simulation
-The system includes a PaperTrading class for simulation testing:
-
-```python
-class PaperTrading:
-    def __init__(self, initial_balance=10000):
-        self.balance = initial_balance
-        self.positions = []
-
-    def execute_trade(self, symbol, volume, order_type, price):
-        """Simulate trade execution"""
-        trade = {
-            'symbol': symbol,
-            'volume': volume,
-            'type': order_type,
-            'price': price,
-            'time': datetime.now()
-        }
-        self.positions.append(trade)
+# Run inference
+python src/r1-v/src/open_r1/generate.py
 ```
-
-Key Features:
-- Simulated balance tracking
-- Position management
-- Trade execution logging
-- Simplified P&L calculation
-
-### DeepSeek R1 Integration
-The system integrates with DeepSeek R1 model for advanced trading strategies:
-
-```python
-r1_model = DeepSeekR1.from_pretrained('deepseek-r1:latest')
-```
-
-Configuration Parameters:
-- Model version control
-- Pretrained weights loading
-- Custom training capabilities
-
-### RLTrader Configuration
-The RLTrader class provides reinforcement learning capabilities:
-
-```python
-rl_trader = RLTrader(
-    client=None,
-    symbol='EURUSD',
-    timeframe='M1',
-    data_path='data/historical_data.csv',
-    train_interval=1,
-    model=r1_model
-)
-```
-
-#### Key Features
-- Reinforcement learning integration with DeepSeek R1
-- Real-time market state tracking
-- Automated reward calculation
-- Model retraining scheduler
-- Comprehensive logging system
-
-#### Configuration Parameters
-| Parameter | Description | Default |
-|-----------|-------------|---------|
-| train_interval | Seconds between training iterations | 1 |
-| data_path | Path to historical data CSV | config/historical_data.csv |
-| log_dir | Directory for training logs | ~/Downloads/rl_trader_logs |
-| transaction_cost | Cost per trade | 0.0005 |
-| risk_factor | Risk adjustment multiplier | 0.15 |
-| vol_window | Volatility calculation window | 14 |
-| min_size | Minimum position size | 0.01 |
-| max_size | Maximum position size | 1.0 |
-
-#### Training Process
-1. Initialize environment and load historical data
-2. Calculate market indicators (RSI, MACD)
-3. Generate training episodes
-4. Calculate rewards based on actions
-5. Retrain model periodically
-6. Log performance metrics
-
-#### Example Usage
-```python
-from RLTrader import RLTrader
-
-# Initialize trader
-trader = RLTrader(train_interval=1)
-
-# Start training session
-trader.run_trading()
-
-# Access training results
-print(f"Total Reward: {trader.total_reward}")
-print(f"Training Duration: {trader.training_end - trader.training_start}")
-```
-
-#### Monitoring
-Training progress is logged to:
-- rl_trader.log: Detailed training metrics
-- improvements.log: Reward improvements over time
-- training_*.log: Individual training session logs
 
 ## Usage Examples
 
@@ -336,6 +257,7 @@ python run_rl_trader.py --model grpo --episodes 1000
 | MT5 connection failed | 1. Verify terminal is running<br>2. Check firewall settings<br>3. Validate credentials |
 | No historical data | 1. Confirm symbol is valid<br>2. Check broker permissions<br>3. Adjust timeframe |
 | Azure VM connection issues | 1. Verify SSH keys<br>2. Check network security groups<br>3. Confirm subscription status |
+| R1-V integration errors | 1. Verify repository structure<br>2. Check config files<br>3. Validate training data |
 
 ## Maintenance & Monitoring
 
