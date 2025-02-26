@@ -1,394 +1,368 @@
-# MetaTrader 5 Python Trading Example
+# MetaTrader 5 Python Trading System
 
-This project demonstrates how to use the MetaTrader 5 (MT5) Python package for connecting, retrieving account information, and executing trades. The project is structured to follow a clear development flow from planning to deployment.
+## Table of Contents
+1. [Project Overview](#project-overview)
+2. [System Architecture](#system-architecture)
+3. [Setup Instructions](#setup-instructions)
+   - [Local Environment](#local-environment)
+   - [Azure Cloud Setup](#azure-cloud-setup)
+4. [Configuration Guide](#configuration-guide)
+   - [MT5 Configuration](#mt5-configuration)
+   - [Azure Configuration](#azure-configuration)
+5. [Script Documentation](#script-documentation)
+6. [Trading Strategy](#trading-strategy)
+7. [Usage Examples](#usage-examples)
+8. [Troubleshooting](#troubleshooting)
+9. [Maintenance & Monitoring](#maintenance--monitoring)
 
----
+## Project Overview
+This project provides a comprehensive trading system that integrates MetaTrader 5 with Python for automated trading. The system includes:
 
-## Project Outline & Checklist
+- Real-time market data processing
+- Automated trade execution
+- Reinforcement learning integration
+- Cloud deployment capabilities
+- Comprehensive monitoring and logging
 
-### 1. Project Preparation & Requirements
-**Documentation & Objectives**  
-- Gather all relevant documentation (PDFs or other documents) that provide the theoretical framework of your trading model.  
-- Define clear objectives such as automated trade entries/exits and risk management strategies.
-
-**Impact on Later Steps**  
-- These foundational documents will guide the design of the simulation environment.
-- They ensure that every component aligns with your overarching goals.
-
-### 2. Extract & Formalize Trading Strategy
-**Trading Rules Extraction**  
-- Use tools like `pdfplumber` or `PyPDF2` to extract trading rules from your documentation.
-
-**Formalization & Specification**  
-- Structure these rules by defining entry/exit conditions and risk management protocols.  
-- Create a strategy specification document (e.g., pseudocode or flowcharts).
-
-**Impact on Later Steps**  
-- Directly implemented in the simulation environment (see Step 4) and influences model decision-making for training and backtesting.
-
-### 3. Historical Data Pipeline
-**Data Source Selection & Script Development**  
-- Choose your data provider (MetaTrader 5, Yahoo Finance, etc.)  
-- Develop Python scripts to fetch and preprocess historical market data.
-
-**Data Formatting & Storage**  
-- Store data in CSV or JSON format for easy ingestion by simulation and training modules.
-
-**Impact on Later Steps**  
-- Provides the data foundation for simulation, training, and backtesting your strategy.
-
----
-
-## Overall Integration in the Project
-
-**Foundation for Simulation & Model Training**  
-- The insights and assets from steps 1–3 are integrated into the simulation environment (Step 4).  
-- Formalized trading rules drive the decision-making logic while historical data provides a realistic market backdrop.
-
-**Guiding Development & Testing**  
-- These steps ensure that subsequent phases—from adapting the R1‑V framework to cloud deployment—are built on a well-defined strategy and robust data pipeline.
-
----
-
-## Detailed Project Steps
-
-### 4. Build the Trading Simulation Environment
-- **Design Simulation Environment:** Create an environment (consider using an OpenAI Gym interface) to simulate market conditions.
-- **Integrate Historical Data:** Feed your preprocessed market data into the simulation.
-- **Implement Strategy Logic:** Code the trading rules from your documentation into the simulation’s reward functions.
-- **Test Simulation:** Run simulations to validate that the environment behaves as expected.
-
-### 5. Adapt the R1‑V Training Framework
-- **Clone the R1‑V Repository:** Review its structure and isolate core components (e.g., training scripts like `grpo.py`).
-- **Modify Data Loaders:** Replace image/text data loaders with modules that load your market data.
-- **Customize Reward Functions:** Adapt the reward mechanism to reflect trading performance and risk metrics.
-- **Adjust Model Architecture:** Tailor the model to accept market data inputs if necessary.
-
-### 6. Model Development & Local Testing
-- **Implement Your Trading Model:** Choose your approach (e.g., RL agent, LSTM-based predictor) and implement it.
-- **Train on Subset of Data:** Run local training sessions to validate model behavior.
-- **Backtest:** Evaluate model performance against historical data and strategy rules.
-
-### 7. Azure Cloud Setup & Full-Scale Training
-- **Sign in to Azure Portal:** Use your Azure trial to set up resources.
-- **Create a GPU-Enabled VM:** For example, an Ubuntu 20.04 LTS VM with GPU (e.g., Standard_NC6).
-- **Connect & Install Dependencies:** SSH into your VM and install CUDA-enabled PyTorch and other libraries.
-- **Clone Your Repository:** Upload or clone your project repository (with integrated R1‑V components).
-- **Run Full-Scale Training:** Execute the training script and monitor performance with proper checkpointing.
-
-### 8. Integration with MetaTrader 5
-- **Set Up MT5 API:** Ensure the MT5 Python package is installed on your environment.
-- **Live Data Fetching Script:** Develop a script to retrieve live market data from MT5.
-- **Order Execution Logic:** Code functions to execute orders using `mt5.order_send()`.
-- **Test with a Demo Account:** Validate live performance in a paper trading mode.
-
-### 9. Deployment, Monitoring & Maintenance
-- **Deploy the Final System:** Consider containerization (e.g., with Docker) for the production environment.
-- **Implement Monitoring & Alerts:** Use logging and monitoring tools to track system performance and errors.
-- **Plan for Model Retraining:** Schedule periodic retraining sessions based on new data or performance decay.
-
-### 10. Documentation & Future Enhancements
-- **Document Every Step:** Maintain thorough documentation for setup, configuration, and operation.
-- **User & Developer Guides:** Provide guides to assist future developers in understanding and extending the project.
-- **Plan Enhancements:** Identify areas for improvements such as added features, improved risk management, or scalability.
-
----
-
-## Trading Strategy: Breaking Resistance and Support Levels
-
-### Overview
-This strategy uses dynamic support and resistance levels on a 5‑minute chart—updated via recent price action—to trigger trades based on candle closes relative to these levels combined with a 40‑period Simple Moving Average (SMA). The system limits to up to 10 orders per chart and ensures new entries occur only if the price matches the initial trade level. Trades are closed when the signal reverses.
-
-### 1. Resistance Breakout (MT5 Implementation)
-- **Setting Resistance:**  
-  - Scan the last 3 hours of price data on a 5‑minute chart.  
-  - Draw a horizontal line at the daily matching highest high.
-- **Trade Execution (Breakout):**  
-  - Trigger a buy order when the price breaks above the resistance line and at least one M5 candle closes above the 40‑period SMA.
-  - Execute an automatic take profit at the first sign of a negative candle, then reset the system.
-- **Additional Condition:**  
-  - If the price falls back below resistance and one candle closes below the moving average, execute a short order.  
-  - If the next candle closes above the moving average, liquidate profits immediately.
-
-### 2. Support Breakdown (MT4 Implementation)
-- **Setting Support:**  
-  - Scan the last trading day on a 5‑minute chart.  
-  - Draw a horizontal line at the daily matching lowest low.
-- **Trade Execution (Breakdown):**  
-  - Trigger a sell order when the price breaks below support and a M5 candle closes below the 40‑period SMA.
-  - Execute an automatic take profit at the first sign of a positive candle, then reset the system.
-- **Additional Condition:**  
-  - If the price rises above the support line and one candle closes above the moving average, execute a buy order.  
-  - If a subsequent candle closes below the moving average, liquidate profits immediately.
-
-### 3. Buy and Sell Logic Requirements
-- **Buy Conditions:**
-  - A 5‑minute candle must close on or above the support line and above the 40‑period SMA.
-  - Alternatively, a 5‑minute candle must close on or above the resistance line and above the 40‑period SMA.
-- **Sell Conditions:**
-  - A 5‑minute candle must close on or below the support line and below the 40‑period SMA.
-  - Alternatively, a 5‑minute candle must close on or below the resistance line and below the 40‑period SMA.
-- **Order Management:**
-  - Place up to 10 orders per chart at a time.
-  - Prevent new entries unless the price matches the initial buy/sell level for that chart.
-  - If the same chart reverses from a buy signal to a sell signal (or vice versa), take profit on the previous trade before opening a new one.
-- **Support and Resistance Refresh:**
-  - Resistance: Recalculate using the last 3 hours of data.
-  - Support: Determine using the most recent trading day’s data.
-
----
-
-## Prerequisites
-
-- MetaTrader 5 desktop application installed and running
-- Python 3.11+ (recommended: Anaconda distribution)
-- MT5 account credentials (demo or live)
-- Basic understanding of technical analysis concepts
-
-## Project Structure
-```
-MT1.0/
-├── config/
-│   └── mt5_config.json       # MT5 connection settings
-├── TheSSS/                   # Reinforcement learning components
-│   ├── R1-V/                # Core trading algorithms
-│   └── strategies/          # Strategy implementations
-├── check_mt5_import.py       # MT5 Python package verification
-├── main.py                   # Main execution script
-├── mt5_live_data.py          # Real-time market data feed
-├── mt5_terminal_check.py     # MT5 platform status monitor
-├── requirements.txt          # Python dependencies
-└── README.md                 # This documentation
+## System Architecture
+```mermaid
+graph TD
+    A[MT5 Terminal] --> B[Python API]
+    B --> C[Data Processing]
+    C --> D[Trading Strategy]
+    D --> E[Order Execution]
+    E --> F[Results Monitoring]
+    F --> G[Cloud Storage]
+    G --> H[Analytics Dashboard]
 ```
 
-## Configuration Setup
+## Setup Instructions
 
-1. Edit `config/mt5_config.json`:
+### Local Environment
+1. Install Python 3.11.8 (exact version):
+   ```bash
+   pyenv install 3.11.8
+   pyenv global 3.11.8
+   ```
+
+2. Install system dependencies:
+   ```bash
+   sudo apt-get update
+   sudo apt-get install -y build-essential libssl-dev zlib1g-dev \
+   libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
+   libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev \
+   liblzma-dev python-openssl git
+   ```
+
+3. Install Python packages with exact versions:
+   ```bash
+   pip install -r requirements.txt --upgrade
+   pip install \
+   backtrader==1.9.76.123 \
+   MetaTrader5==5.0.43 \
+   numpy==1.26.4 \
+   pandas==2.1.4 \
+   scikit-learn==1.3.2 \
+   torch==2.1.1 \
+   transformers==4.35.2
+   ```
+
+4. Configure MT5:
+   - Install MetaTrader 5 (build 2560 or later)
+   - Create demo account with at least $10,000 balance
+   - Enable Python API in terminal settings:
+     1. Tools > Options > Expert Advisors
+     2. Enable "Allow automated trading"
+     3. Enable "Allow DLL imports"
+     4. Set "Maximum bars in chart" to 1000000
+
+5. Prepare historical data:
+   - Download EURUSD M1 data from 2010-present
+   - Convert to CSV format with OHLCV columns
+   - Store in data/historical_data.csv
+   - Verify data integrity:
+     ```python
+     import pandas as pd
+     df = pd.read_csv('data/historical_data.csv')
+     assert df.shape[0] > 1000000, "Insufficient historical data"
+     assert set(df.columns) == {'timestamp', 'open', 'high', 'low', 'close', 'volume'}, "Invalid column structure"
+     ```
+
+6. Initialize RL model:
+   ```bash
+   python -c "from RLTrader import RLTrader; trader = RLTrader(); trader.initialize_model()"
+   ```
+
+7. Verify installation:
+   ```bash
+   python -m pytest tests/
+   ```
+
+### Azure Cloud Setup
+1. Create Azure account
+2. Set up GPU-enabled VM:
+   ```bash
+   az vm create --resource-group TradingGroup --name RL-Trader-VM \
+   --image UbuntuLTS --size Standard_NC6 --admin-username azureuser
+   ```
+3. Install dependencies:
+   ```bash
+   sudo apt update
+   sudo apt install python3-pip
+   pip install -r requirements.txt
+   ```
+
+## Configuration Guide
+
+### MT5 Configuration
+Edit `config/mt5_config.json`:
 ```json
 {
-  "login": YOUR_MT5_ACCOUNT_NUMBER,
-  "password": "YOUR_MT5_PASSWORD",
-  "server": "YOUR_BROKER_SERVER_NAME",
+  "login": "YOUR_ACCOUNT_NUMBER",
+  "password": "YOUR_PASSWORD",
+  "server": "YOUR_BROKER",
   "symbols": ["EURUSD","XAUUSD","GBPUSD"],
   "timeframe": "M5",
   "update_interval": 60
 }
 ```
 
-2. For Azure cloud integration:
+### Azure Configuration
+1. Set up storage account:
+   ```bash
+   az storage account create --name tradingstorage --resource-group TradingGroup
+   ```
+2. Configure monitoring:
+   ```bash
+   az monitor log-analytics workspace create --resource-group TradingGroup --workspace-name TradingLogs
+   ```
+
+## Script Documentation
+
+| Script | Purpose | Parameters |
+|--------|---------|------------|
+| main.py | Main execution | --mode [backtest/live], --risk [0.01-0.05] |
+| mt5_live_data.py | Real-time data feed | --symbol [currency pair], --timeframe [M1-M30] |
+| run_rl_trader.py | RL strategy execution | --model [path], --episodes [number] |
+| test_runner.py | Strategy testing | --strategy [name], --period [days] |
+
+## Trading Strategy
+
+### Reinforcement Learning Strategy (RLBacktraderStrategy)
+The RLBacktraderStrategy integrates reinforcement learning with Backtrader's trading engine. Key features include:
+
+1. **RL Integration**
+   - Uses RLTrader class for decision making
+   - Supports periodic model training
+   - Implements reward-based learning
+
+2. **Core Components**
+   - Episode-based training system
+   - Trade history tracking
+   - Reward calculation based on P&L
+   - Automated position management
+
+3. **Configuration Parameters**
+   ```python
+   params = (
+       ('training_episodes', 10),  # Number of training episodes
+       ('historical_data_path', 'data/historical_data.csv')  # Path to market data
+   )
+   ```
+
+4. **Execution Flow**
+   - Initialize RL model and environment
+   - Process market data through RL agent
+   - Execute trades based on RL actions
+   - Calculate rewards and update model
+   - Log performance metrics
+
+5. **Risk Management**
+   - Position sizing based on account balance
+   - Stop-loss and take-profit levels
+   - Daily loss limits
+   - Trade frequency controls
+
+### Traditional Strategy Components
+1. Dynamic Support/Resistance Levels
+2. 40-period SMA Filter
+3. Risk Management:
+   - 2% per trade
+   - 10:1 risk/reward ratio
+   - Daily loss limit
+
+### Execution Logic
+```python
+def execute_trade(signal):
+    if signal == "BUY":
+        # Calculate position size
+        lot_size = calculate_lot_size(risk_percentage)
+        # Execute buy order
+        mt5.order_send({
+            "action": mt5.TRADE_ACTION_DEAL,
+            "symbol": symbol,
+            "volume": lot_size,
+            "type": mt5.ORDER_TYPE_BUY,
+            "price": mt5.symbol_info_tick(symbol).ask,
+            "sl": calculate_stop_loss(),
+            "tp": calculate_take_profit()
+        })
+```
+
+## Simulation & Training
+
+### PaperTrading Simulation
+The system includes a PaperTrading class for simulation testing:
+
+```python
+class PaperTrading:
+    def __init__(self, initial_balance=10000):
+        self.balance = initial_balance
+        self.positions = []
+
+    def execute_trade(self, symbol, volume, order_type, price):
+        """Simulate trade execution"""
+        trade = {
+            'symbol': symbol,
+            'volume': volume,
+            'type': order_type,
+            'price': price,
+            'time': datetime.now()
+        }
+        self.positions.append(trade)
+```
+
+Key Features:
+- Simulated balance tracking
+- Position management
+- Trade execution logging
+- Simplified P&L calculation
+
+### DeepSeek R1 Integration
+The system integrates with DeepSeek R1 model for advanced trading strategies:
+
+```python
+r1_model = DeepSeekR1.from_pretrained('deepseek-r1:latest')
+```
+
+Configuration Parameters:
+- Model version control
+- Pretrained weights loading
+- Custom training capabilities
+
+### RLTrader Configuration
+The RLTrader class provides reinforcement learning capabilities:
+
+```python
+rl_trader = RLTrader(
+    client=None,
+    symbol='EURUSD',
+    timeframe='M1',
+    data_path='data/historical_data.csv',
+    train_interval=1,
+    model=r1_model
+)
+```
+
+#### Key Features
+- Reinforcement learning integration with DeepSeek R1
+- Real-time market state tracking
+- Automated reward calculation
+- Model retraining scheduler
+- Comprehensive logging system
+
+#### Configuration Parameters
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| train_interval | Seconds between training iterations | 1 |
+| data_path | Path to historical data CSV | config/historical_data.csv |
+| log_dir | Directory for training logs | ~/Downloads/rl_trader_logs |
+| transaction_cost | Cost per trade | 0.0005 |
+| risk_factor | Risk adjustment multiplier | 0.15 |
+| vol_window | Volatility calculation window | 14 |
+| min_size | Minimum position size | 0.01 |
+| max_size | Maximum position size | 1.0 |
+
+#### Training Process
+1. Initialize environment and load historical data
+2. Calculate market indicators (RSI, MACD)
+3. Generate training episodes
+4. Calculate rewards based on actions
+5. Retrain model periodically
+6. Log performance metrics
+
+#### Example Usage
+```python
+from RLTrader import RLTrader
+
+# Initialize trader
+trader = RLTrader(train_interval=1)
+
+# Start training session
+trader.run_trading()
+
+# Access training results
+print(f"Total Reward: {trader.total_reward}")
+print(f"Training Duration: {trader.training_end - trader.training_start}")
+```
+
+#### Monitoring
+Training progress is logged to:
+- rl_trader.log: Detailed training metrics
+- improvements.log: Reward improvements over time
+- training_*.log: Individual training session logs
+
+## Usage Examples
+
+### Backtesting
 ```bash
-az vm create --resource-group TradingGroup --name RL-Trader-VM --image UbuntuLTS --size Standard_NC6 --admin-username azureuser
+python main.py --mode backtest --strategy breakout --period 30
 ```
 
-## Code Examples
-
-### Basic MT5 Connection
-```python
-import MetaTrader5 as mt5
-
-def connect_mt5():
-    if not mt5.initialize():
-        print("MT5 initialization failed")
-        mt5.shutdown()
-        return False
-    print(f"Connected to {mt5.terminal_info().name}")
-    return True
+### Live Trading
+```bash
+python main.py --mode live --risk 0.02
 ```
 
-### Live Trading Signal Check
-```python
-def check_breakout(symbol, timeframe):
-    rates = mt5.copy_rates_from_pos(symbol, timeframe, 0, 10)
-    current_close = rates['close'][-1]
-    resistance = calculate_dynamic_resistance(rates)
-    
-    if current_close > resistance and above_sma(40):
-        return "BUY"
-    elif current_close < resistance and below_sma(40):
-        return "SELL"
-    return "HOLD"
+### Cloud Training
+```bash
+python run_rl_trader.py --model grpo --episodes 1000
 ```
-
-## Getting Started
-
-1. Ensure MetaTrader 5 is installed and running
-2. Configure your credentials in `config/mt5_config.json`
-3. Install dependencies:
-   ```sh
-   pip install -r requirements.txt
-   ```
-4. Run the trading system:
-   ```sh
-   python main.py --mode live --risk 0.02
-   ```
 
 ## Troubleshooting
 
-Common Issues                        | Solutions
-------------------------------------|-------------------------
-`MetaTrader5 initialization failed` | 1. Verify MT5 is running<br>2. Check firewall settings<br>3. Validate login credentials
-`No historical data available`      | 1. Confirm symbol is valid<br>2. Check broker permissions<br>3. Adjust timeframe
-`Azure VM connection issues`        | 1. Verify SSH keys<br>2. Check network security groups<br>3. Confirm subscription status
-# MetaTrader 5 Python Trading Example
+| Issue | Solution |
+|-------|----------|
+| MT5 connection failed | 1. Verify terminal is running<br>2. Check firewall settings<br>3. Validate credentials |
+| No historical data | 1. Confirm symbol is valid<br>2. Check broker permissions<br>3. Adjust timeframe |
+| Azure VM connection issues | 1. Verify SSH keys<br>2. Check network security groups<br>3. Confirm subscription status |
 
-This project demonstrates how to use the MetaTrader 5 (MT5) Python package for connecting, retrieving account information, and executing trades. The project is structured to follow a clear development flow from planning to deployment.
+## Maintenance & Monitoring
 
----
+### Scheduled Tasks
+- Daily performance reports
+- Weekly model retraining
+- Monthly strategy optimization
 
-## Project Outline & Checklist
+### Monitoring Tools
+- Azure Monitor
+- MT5 Journal
+- Custom logging system
 
-### 1. Project Preparation & Requirements
-**Documentation & Objectives**  
-- Gather all relevant documentation (PDFs or other documents) that provide the theoretical framework of your trading model.  
-- Define clear objectives such as automated trade entries/exits and risk management strategies.
+### Alert System
+```python
+def send_alert(message):
+    if config['alerts_enabled']:
+        requests.post(config['webhook_url'], json={
+            "text": f"[Trading Alert] {message}"
+        })
+```
 
-**Impact on Later Steps**  
-- These foundational documents will guide the design of the simulation environment.
-- They ensure that every component aligns with your overarching goals.
-
-### 2. Extract & Formalize Trading Strategy
-**Trading Rules Extraction**  
-- Use tools like `pdfplumber` or `PyPDF2` to extract trading rules from your documentation.
-
-**Formalization & Specification**  
-- Structure these rules by defining entry/exit conditions and risk management protocols.  
-- Create a strategy specification document (e.g., pseudocode or flowcharts).
-
-**Impact on Later Steps**  
-- Directly implemented in the simulation environment (see Step 4) and influences model decision-making for training and backtesting.
-
-### 3. Historical Data Pipeline
-**Data Source Selection & Script Development**  
-- Choose your data provider (MetaTrader 5, Yahoo Finance, etc.)  
-- Develop Python scripts to fetch and preprocess historical market data.
-
-**Data Formatting & Storage**  
-- Store data in CSV or JSON format for easy ingestion by simulation and training modules.
-
-**Impact on Later Steps**  
-- Provides the data foundation for simulation, training, and backtesting your strategy.
-
----
-
-## Overall Integration in the Project
-
-**Foundation for Simulation & Model Training**  
-- The insights and assets from steps 1–3 are integrated into the simulation environment (Step 4).  
-- Formalized trading rules drive the decision-making logic while historical data provides a realistic market backdrop.
-
-**Guiding Development & Testing**  
-- These steps ensure that subsequent phases—from adapting the R1‑V framework to cloud deployment—are built on a well-defined strategy and robust data pipeline.
-
----
-
-## Detailed Project Steps
-
-### 4. Build the Trading Simulation Environment
-- **Design Simulation Environment:** Create an environment (consider using an OpenAI Gym interface) to simulate market conditions.
-- **Integrate Historical Data:** Feed your preprocessed market data into the simulation.
-- **Implement Strategy Logic:** Code the trading rules from your documentation into the simulation’s reward functions.
-- **Test Simulation:** Run simulations to validate that the environment behaves as expected.
-
-### 5. Adapt the R1‑V Training Framework
-- **Clone the R1‑V Repository:** Review its structure and isolate core components (e.g., training scripts like `grpo.py`).
-- **Modify Data Loaders:** Replace image/text data loaders with modules that load your market data.
-- **Customize Reward Functions:** Adapt the reward mechanism to reflect trading performance and risk metrics.
-- **Adjust Model Architecture:** Tailor the model to accept market data inputs if necessary.
-
-### 6. Model Development & Local Testing
-- **Implement Your Trading Model:** Choose your approach (e.g., RL agent, LSTM-based predictor) and implement it.
-- **Train on Subset of Data:** Run local training sessions to validate model behavior.
-- **Backtest:** Evaluate model performance against historical data and strategy rules.
-
-### 7. Azure Cloud Setup & Full-Scale Training
-- **Sign in to Azure Portal:** Use your Azure trial to set up resources.
-- **Create a GPU-Enabled VM:** For example, an Ubuntu 20.04 LTS VM with GPU (e.g., Standard_NC6).
-- **Connect & Install Dependencies:** SSH into your VM and install CUDA-enabled PyTorch and other libraries.
-- **Clone Your Repository:** Upload or clone your project repository (with integrated R1‑V components).
-- **Run Full-Scale Training:** Execute the training script and monitor performance with proper checkpointing.
-
-### 8. Integration with MetaTrader 5
-- **Set Up MT5 API:** Ensure the MT5 Python package is installed on your environment.
-- **Live Data Fetching Script:** Develop a script to retrieve live market data from MT5.
-- **Order Execution Logic:** Code functions to execute orders using `mt5.order_send()`.
-- **Test with a Demo Account:** Validate live performance in a paper trading mode.
-
-### 9. Deployment, Monitoring & Maintenance
-- **Deploy the Final System:** Consider containerization (e.g., with Docker) for the production environment.
-- **Implement Monitoring & Alerts:** Use logging and monitoring tools to track system performance and errors.
-- **Plan for Model Retraining:** Schedule periodic retraining sessions based on new data or performance decay.
-
-### 10. Documentation & Future Enhancements
-- **Document Every Step:** Maintain thorough documentation for setup, configuration, and operation.
-- **User & Developer Guides:** Provide guides to assist future developers in understanding and extending the project.
-- **Plan Enhancements:** Identify areas for improvements such as added features, improved risk management, or scalability.
-
----
-
-## Trading Strategy: Breaking Resistance and Support Levels
-
-### Overview
-This strategy uses dynamic support and resistance levels on a 5‑minute chart—updated via recent price action—to trigger trades based on candle closes relative to these levels combined with a 40‑period Simple Moving Average (SMA). The system limits to up to 10 orders per chart and ensures new entries occur only if the price matches the initial trade level. Trades are closed when the signal reverses.
-
-### 1. Resistance Breakout (MT5 Implementation)
-- **Setting Resistance:**  
-  - Scan the last 3 hours of price data on a 5‑minute chart.  
-  - Draw a horizontal line at the daily matching highest high.
-- **Trade Execution (Breakout):**  
-  - Trigger a buy order when the price breaks above the resistance line and at least one M5 candle closes above the 40‑period SMA.
-  - Execute an automatic take profit at the first sign of a negative candle, then reset the system.
-- **Additional Condition:**  
-  - If the price falls back below resistance and one candle closes below the moving average, execute a short order.  
-  - If the next candle closes above the moving average, liquidate profits immediately.
-
-### 2. Support Breakdown (MT4 Implementation)
-- **Setting Support:**  
-  - Scan the last trading day on a 5‑minute chart.  
-  - Draw a horizontal line at the daily matching lowest low.
-- **Trade Execution (Breakdown):**  
-  - Trigger a sell order when the price breaks below support and a M5 candle closes below the 40‑period SMA.
-  - Execute an automatic take profit at the first sign of a positive candle, then reset the system.
-- **Additional Condition:**  
-  - If the price rises above the support line and one candle closes above the moving average, execute a buy order.  
-  - If a subsequent candle closes below the moving average, liquidate profits immediately.
-
-### 3. Buy and Sell Logic Requirements
-- **Buy Conditions:**
-  - A 5‑minute candle must close on or above the support line and above the 40‑period SMA.
-  - Alternatively, a 5‑minute candle must close on or above the resistance line and above the 40‑period SMA.
-- **Sell Conditions:**
-  - A 5‑minute candle must close on or below the support line and below the 40‑period SMA.
-  - Alternatively, a 5‑minute candle must close on or below the resistance line and below the 40‑period SMA.
-- **Order Management:**
-  - Place up to 10 orders per chart at a time.
-  - Prevent new entries unless the price matches the initial buy/sell level for that chart.
-  - If the same chart reverses from a buy signal to a sell signal (or vice versa), take profit on the previous trade before opening a new one.
-- **Support and Resistance Refresh:**
-  - Resistance: Recalculate using the last 3 hours of data.
-  - Support: Determine using the most recent trading day’s data.
-
----
-
-## Getting Started
-
-1. Ensure MetaTrader 5 is installed and running.
-2. Install the required Python packages:
-
-   ```sh
-   pip install -r requirements.txt
-   ```
-
-3. Run the main script:
-
-   ```sh
-   python main.py
-   ```
-
----
-
-## Notes
-- This project is for educational purposes; always test with a demo account first.
-- Detailed diagnostics and testing utilities are available in other scripts provided in the repository.
+## Future Enhancements
+1. Multi-currency portfolio management
+2. Advanced risk modeling
+3. Machine learning integration
+4. Mobile monitoring app
 
 ---
 

@@ -6,6 +6,7 @@ import os
 from datetime import datetime
 import pandas as pd
 from TheSSS.R1_V.rl_trader import RLTrader
+from R1_V_repo.src.r1_v.src.open_r1 import DeepSeekR1
 
 # Define PaperTrading class
 class PaperTrading:
@@ -39,13 +40,17 @@ class PaperTrading:
         return self.positions
 
 def main():
+    # Initialize DeepSeek R1 model
+    r1_model = DeepSeekR1.from_pretrained('deepseek-r1:latest')
+
     # Initialize RLTrader with enhanced configuration
     rl_trader = RLTrader(
         client=None,
         symbol='EURUSD',
         timeframe='M1',
         data_path='TheSSS/trading-backtrader-azure/data/historical_data.csv',
-        train_interval=1  # Train after every episode
+        train_interval=1,  # Train after every episode
+        model=r1_model  # Add R1 model
     )
     rl_trader.initialize_trainer()
     
